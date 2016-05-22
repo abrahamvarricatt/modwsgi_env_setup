@@ -54,3 +54,16 @@
     virtualenv: "{{ virtualenv_root }}/bottle"
     settings: "myproject.settings"
 
+- name: Stop apache
+  become: yes
+  become_method: sudo
+  service:
+    name: httpd
+    state: stopped
+
+- name: Start apache
+  become: yes
+  become_method: sudo
+  service:
+    name: httpd
+    state: started
