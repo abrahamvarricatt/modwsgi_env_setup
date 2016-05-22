@@ -22,6 +22,12 @@
     virtualenv: "{{ virtualenv_root }}/bottle"
     virtualenv_python: "/opt/oss_sources/COMPILED_PYTHON/bin/python2.7"
 
+- name: Install PyXML
+  pip:
+    chdir: "{{ source_repo['bottle'].path }}"
+    name: "file:{{ source_repo['bottle'].path }}/outside_pypi/PyXML-0.8.4.tar.gz"
+    virtualenv: "{{ virtualenv_root }}/bottle"
+
 - name: Install requirements.txt
   pip:
     chdir: "{{ source_repo['bottle'].path }}"
@@ -29,8 +35,22 @@
     virtualenv: "{{ virtualenv_root }}/bottle"
   environment:
     PYCURL_SSL_LIBRARY: "nss"
+  register: bottle_venv
 
+- name: Remove PIL
+  pip:
+    chdir: "{{ source_repo['bottle'].path }}"
+    name: PIL
+    virtualenv: "{{ virtualenv_root }}/bottle"
+    state: absent
+  when: bottle_venv.changed
 
+- name: Re-install PIL from local sources
+  pip:
+    chdir: "{{ source_repo['bottle'].path }}"
+    name: "file:{{ source_repo['bottle'].path }}/outside_pypi/PIL-1.1.7.tar.gz"
+    virtualenv: "{{ virtualenv_root }}/bottle"
+  when: bottle_venv.changed
 
 
 

@@ -57,6 +57,7 @@
    - telnet
    - zip
    - unzip
+   - gdb
   notify:
     - restart redis
 
