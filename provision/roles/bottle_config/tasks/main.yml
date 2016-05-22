@@ -1,0 +1,56 @@
+---
+
+- name: Copy over httpd.conf
+  become: yes
+  become_method: sudo
+  copy:
+    src: "{{ env_setup }}/httpd.conf"
+    dest: /etc/httpd/httpd.conf
+    owner: apache
+    group: www
+  notify:
+    - restart apache-httpd
+
+- name: Copy over bottle.wsgi
+  copy:
+    src: "{{ env_setup }}/bottle.wsgi"
+    dest: "{{ source_repo['bottle'].path }}/myproject/bottle.wsgi"
+
+- name: Create directory for static-files
+  become: yes
+  become_method: sudo
+  file:
+    dest: "/srv/STATIC_FILES"
+    state: directory
+    owner: apache
+    group: www
+    mode: 0775
+
+- name: Configure bottle.conf
+  become: yes
+  become_method: sudo
+  copy:
+    src: "{{ env_setup }}/bottle.conf"
+    dest: /etc/httpd/extra/bottle.conf
+    owner: apache
+    group: www
+    mode: 0644
+
+- name: Run collectstatic
+  become: yes
+  become_user: apache
+  django_manage:
+    command: collectstatic
+    app_path: "{{ source_repo['bottle'].path }}"
+    virtualenv: "{{ virtualenv_root }}/bottle"
+    settings: "myproject.settings"
+
+- name: Run migrate
+  become: yes
+  become_user: apache
+  django_manage:
+    command: migrate
+    app_path: "{{ source_repo['bottle'].path }}"
+    virtualenv: "{{ virtualenv_root }}/bottle"
+    settings: "myproject.settings"
+

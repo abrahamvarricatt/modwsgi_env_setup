@@ -14,4 +14,5 @@
     - { role: vagrant_database, when: (env_setup == 'dev') }
     - bottle_sources
     - bottle_VENV
+    - bottle_config
 
