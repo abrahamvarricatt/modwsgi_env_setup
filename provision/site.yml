@@ -1,0 +1,10 @@
+---
+
+- hosts: webservers
+
+  vars_files:
+    - env_vars/general.yml
+
+  roles:
+    - ping_test
+
