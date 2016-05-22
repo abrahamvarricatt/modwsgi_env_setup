@@ -1,0 +1,8 @@
+---
+
+source_repo:
+  bottle:
+    path: "{{ sources_root }}/bottle"
+    repo_link: https://github.com/abrahamvarricatt/basicdjango.git
+    tag: master
+

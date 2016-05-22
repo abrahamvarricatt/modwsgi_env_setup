@@ -68,12 +68,12 @@
 #- name: DEBUG GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
 #  debug: "msg={{ database_dump }}"
 
-#- name: Delete old {{ mysql_db_name[env_setup] }} database
-#  become: yes
-#  become_method: sudo
-#  mysql_db: name={{ mysql_db_name[env_setup] }} state=absent
-#  notify:
-#    - restart mysql
+- name: Delete old {{ mysql_db_name[env_setup] }} database
+  become: yes
+  become_method: sudo
+  mysql_db: name={{ mysql_db_name[env_setup] }} state=absent
+  notify:
+    - restart mysql
 #  when: (database_dump.changed == True)
 
 - name: Create new {{ mysql_db_name[env_setup] }} database

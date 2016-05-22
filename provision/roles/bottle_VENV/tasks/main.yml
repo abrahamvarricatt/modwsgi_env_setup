@@ -1,0 +1,37 @@
+---
+
+- name: Directory to store VENVs
+  become: yes
+  become_method: sudo
+  file:
+    path: "{{ virtualenv_root }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0775
+
+
+#- name: DEBUG GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+#  debug: "msg={{  }}"
+
+- name: Create python2.7 virtualenv with pip
+  pip:
+    chdir: "{{ source_repo['bottle'].path }}"
+    name: pip
+    version: 8.1.2
+    virtualenv: "{{ virtualenv_root }}/bottle"
+    virtualenv_python: "/opt/oss_sources/COMPILED_PYTHON/bin/python2.7"
+
+- name: Install requirements.txt
+  pip:
+    chdir: "{{ source_repo['bottle'].path }}"
+    requirements: requirements.txt
+    virtualenv: "{{ virtualenv_root }}/bottle"
+  environment:
+    PYCURL_SSL_LIBRARY: "nss"
+
+
+
+
+
+

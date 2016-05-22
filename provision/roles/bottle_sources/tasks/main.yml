@@ -1,0 +1,52 @@
+---
+
+# Following 3 tasks are to setup the source folder. We want the sources
+# to be accessable on the external /vagrant folder on developer setups.
+# Regular folder otherwise
+
+- name: Create source-code directory on /vagrant
+  file:
+    dest: "/vagrant{{ sources_root }}"
+    state: directory
+  when: (env_setup == 'dev')
+
+- name: Symlink source-code directory on guest system
+  become: yes
+  become_method: sudo
+  file:
+    src: "/vagrant{{ sources_root }}"
+    dest: "{{ sources_root }}"
+    state: link
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0774
+  when: (env_setup == 'dev')
+
+- name: Create directory to hold source code
+  become: yes
+  become_method: sudo
+  file:
+    path: "{{ sources_root }}/"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0774
+  when: (env_setup != 'dev-gobusiness')
+
+- name: Delete *.pyc files in {{ sources_root }}/
+  shell: find . -name "*.pyc" -delete
+  args:
+    chdir: "{{ sources_root }}/"
+
+# Now, begin mass cloning process!!
+
+- name: Clone bottle source code repositories
+  git:
+    repo: "{{ source_repo[item].repo_link }}"
+    dest: "{{ source_repo[item].path }}"
+    version: "{{ source_repo[item].tag }}"
+    force: yes
+    update: yes
+    recursive: no
+  with_items:
+    - 'bottle'

@@ -4,6 +4,7 @@
 
   vars_files:
     - env_vars/general.yml
+    - env_vars/bottle_vars.yml
 
   roles:
     - ping_test
@@ -11,4 +12,6 @@
     - install_python27
     - apache_httpd
     - { role: vagrant_database, when: (env_setup == 'dev') }
+    - bottle_sources
+    - bottle_VENV
 
