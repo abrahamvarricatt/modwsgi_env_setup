@@ -1,0 +1,72 @@
+---
+
+- name: Update all packages
+  become: yes
+  become_method: sudo
+  yum: name=* state=latest update_cache=yes
+
+- name: Install EPEL Repository
+  become: yes
+  become_method: sudo
+  yum: name=epel-release state=present
+
+- name: Setup MySQL56_x64 repo
+  become: yes
+  become_method: sudo
+  yum: name=http://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm state=present
+
+- name: Install basic packages
+  become: yes
+  become_method: sudo
+  yum: name="{{ item }}" state=present
+  with_items:
+   - MySQL-python
+   - python-pip
+   - python-virtualenv
+   - git
+   - libevent-devel
+   - libffi-devel
+   - python-devel.x86_64
+   - mysql-community-devel.x86_64
+   - libffi-devel
+   - gcc
+   - gcc-c++
+   - make
+   - openssl-devel
+   - libxml2
+   - libxml2-devel
+   - libxslt
+   - libxslt-devel
+   - vim
+   - GeoIP-devel
+   - libjpeg-devel
+   - libcurl-devel
+   - libtidy
+   - redis
+   - wget
+   - libselinux-python
+   - mysql-community-client
+   - zlib-devel
+   - bzip2-devel
+   - openssl-devel
+   - ncurses-devel
+   - readline-devel
+   - pcre-devel
+   - curl-devel
+   - sqlite-devel
+   - telnet
+   - zip
+   - unzip
+  notify:
+    - restart redis
+
+- name: SELinux policy to Permissive
+  become: yes
+  become_method: sudo
+  selinux: policy=permissive state=permissive
+
+- name: Disable iptables firewall
+  become: yes
+  become_method: sudo
+  service: name=iptables state=stopped enabled=no
+

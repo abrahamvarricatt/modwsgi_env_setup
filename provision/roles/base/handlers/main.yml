@@ -1,0 +1,12 @@
+---
+
+- name: restart redis
+  become: yes
+  become_user: root
+  become_method: sudo
+  service:
+    name: redis
+    state: restarted
+    enabled: yes
+
+
