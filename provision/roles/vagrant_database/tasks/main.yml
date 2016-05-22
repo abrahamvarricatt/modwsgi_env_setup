@@ -1,0 +1,119 @@
+---
+
+- name: Install MySQL56 x64 server
+  become: yes
+  become_method: sudo
+  yum: name=mysql-community-server state=present
+
+- name: Check if log directory is present
+  stat: path=/var/log/mysql
+  register: mysqlLog
+
+- name: Create log directory for MySQL
+  become: yes
+  become_method: sudo
+  file:
+    dest: /var/log/mysql
+    state: directory
+  when: mysqlLog.stat.exists == False
+
+- name: Begin mysqld background service
+  become: yes
+  become_method: sudo
+  service: name=mysqld state=started enabled=yes
+
+- name: Update mysql root password for all root accounts
+  become: yes
+  become_method: sudo
+  mysql_user:
+    name: root
+    host: "{{ item }}"
+    password: "{{ mysql_root_password }}"
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    check_implicit_admin: yes
+    priv: "*.*:ALL,GRANT"
+  with_items:
+    - "{{ ansible_hostname }}"
+    - 127.0.0.1
+    - ::1
+    - localhost
+
+- name: Copy root.cnf.j2 to /etc/my.cnf
+  become: yes
+  become_method: sudo
+  template: src=root.cnf.j2 dest=/etc/my.cnf
+
+- name: Copy root.cnf.j2 to /root/.my.cnf
+  become: yes
+  become_method: sudo
+  template: src=root.cnf.j2 dest=/root/.my.cnf
+
+- name: Restart mysqld service
+  become: yes
+  become_method: sudo
+  service: name=mysqld state=restarted enabled=yes
+
+# To manually make a dump of a local database,
+# $ mysqldump -u root -psqlsql --databases travelb2b | gzip > travelb2b_dump.sql.gz
+# $ mysqldump -u root -psqlsql --databases travelb2b | bzip2 > travelb2b_dump.sql.bz2
+
+#- name: Copy {{ env_setup }}/{{ mysql_dump[env_setup] }} to remote host
+#  copy: src={{ env_setup }}/{{ mysql_dump[env_setup] }} dest=/tmp/dump.sql.bz2
+#  register: database_dump
+
+# To manually restore database from local file,
+# $ gunzip < dump.sql.gz | mysql -u usuario -psqlsql
+
+#- name: DEBUG GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+#  debug: "msg={{ database_dump }}"
+
+#- name: Delete old {{ mysql_db_name[env_setup] }} database
+#  become: yes
+#  become_method: sudo
+#  mysql_db: name={{ mysql_db_name[env_setup] }} state=absent
+#  notify:
+#    - restart mysql
+#  when: (database_dump.changed == True)
+
+- name: Create new {{ mysql_db_name[env_setup] }} database
+  become: yes
+  become_method: sudo
+  mysql_db: name={{ mysql_db_name[env_setup] }} state=present
+  notify:
+    - restart mysql
+#  when: (database_dump.changed == True)
+
+#- name: Restore database from dump file
+#  become: yes
+#  become_method: sudo
+#  mysql_db: name={{ mysql_db_name[env_setup] }} state=import target=/tmp/dump.sql.bz2
+#  notify:
+#    - restart mysql
+#  when: (database_dump.changed == True)
+
+- name: Configure repo for mongodb 3.2
+  become: yes
+  become_method: sudo
+  copy:
+    src: mongodb-org-3.2.repo
+    dest: /etc/yum.repos.d/mongodb-org-3.2.repo
+
+- name: Install mongodb 3.2
+  become: yes
+  become_method: sudo
+  yum: name="{{ item }}" state=present
+  with_items:
+   - mongodb-org
+   - mongodb-org-server
+   - mongodb-org-shell
+   - mongodb-org-mongos
+   - mongodb-org-tools
+  notify:
+    - restart mongod
+
+- name: Restart mongod service
+  become: yes
+  become_method: sudo
+  service: name=mongod state=restarted enabled=yes
+

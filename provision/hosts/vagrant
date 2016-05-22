@@ -5,7 +5,7 @@ virtualsystem
 192.168.33.10
 
 [virtualsystem:vars]
-env-setup=dev
+env_setup=dev
 ansible_user=vagrant
 ansible_connect=ssh
 ansible_ssh_user=vagrant

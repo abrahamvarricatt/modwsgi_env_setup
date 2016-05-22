@@ -8,4 +8,7 @@
   roles:
     - ping_test
     - base
+    - install_python27
+    - apache_httpd
+    - { role: vagrant_database, when: (env_setup == 'dev') }
 

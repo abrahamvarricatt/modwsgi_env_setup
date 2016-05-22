@@ -1,0 +1,10 @@
+---
+
+- name: restart apache-httpd
+  become: yes
+  become_method: sudo
+  service:
+    name: httpd
+    state: restarted
+
+
