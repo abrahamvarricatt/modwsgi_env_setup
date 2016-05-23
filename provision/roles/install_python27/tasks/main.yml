@@ -41,7 +41,7 @@
 - name: Configure, compile and install Python
   shell: cd /opt/oss_sources/Python-{{ python2_version }} && {{ item }}
   with_items:
-    - ./configure --enable-shared --enable-unicode=ucs4 --prefix=$(pwd)/../COMPILED_PYTHON LDFLAGS="-L$(pwd)/../COMPILED_PYTHON/extlib/lib -Wl,--rpath=$(pwd)/../COMPILED_PYTHON/lib -Wl,--rpath=$(pwd)/../COMPILED_PYTHON/extlib/lib" CPPFLAGS="-I$(pwd)/../COMPILED_PYTHON/extlib/include"
+    - ./configure --enable-shared --with-system-expat --with-system-ffi --enable-unicode=ucs4 --prefix=$(pwd)/../COMPILED_PYTHON LDFLAGS="-L$(pwd)/../COMPILED_PYTHON/extlib/lib -Wl,--rpath=$(pwd)/../COMPILED_PYTHON/lib -Wl,--rpath=$(pwd)/../COMPILED_PYTHON/extlib/lib" CPPFLAGS="-I$(pwd)/../COMPILED_PYTHON/extlib/include"
     - make
     - make altinstall
   when: not python_2_7_source.stat.exists
