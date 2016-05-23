@@ -102,7 +102,7 @@
 - name: Configure and compile httpd
   shell: cd /opt/oss_sources/httpd-{{ httpd_version }}/ && {{ item }}
   with_items:
-    - ./configure --enable-so --with-included-apr --enable-mods-shared=reallyall --with-mpm=worker
+    - ./configure --enable-so --with-included-apr --enable-mods-shared=reallyall --with-mpm=worker --enable-debugger-mode
     - make
   when: not apachehttpd_source.stat.exists
 
@@ -213,7 +213,7 @@
 - name: Configure and compile mod_wsgi
   shell: cd /opt/oss_sources/mod_wsgi-{{ mod_wsgi_version }} && {{ item }}
   with_items:
-    - ./configure --with-python=/opt/oss_sources/COMPILED_PYTHON/bin/python2.7 LDFLAGS="-Wl,-rpath=/opt/oss_sources/COMPILED_PYTHON/lib" --with-apxs=/usr/local/apache2/bin/apxs
+    - ./configure --with-python=/opt/oss_sources/COMPILED_PYTHON/bin/python2.7 LDFLAGS="-Wl,-rpath=/opt/oss_sources/COMPILED_PYTHON/lib" --with-apxs=/usr/local/apache2/bin/apxs CFLAGS="-g"
     - make
   when: not modwsgi_source.stat.exists
 
