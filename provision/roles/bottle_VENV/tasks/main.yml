@@ -22,11 +22,11 @@
     virtualenv: "{{ virtualenv_root }}/bottle"
     virtualenv_python: "/opt/oss_sources/COMPILED_PYTHON/bin/python2.7"
 
-#- name: Install PyXML
-#  pip:
-#    chdir: "{{ source_repo['bottle'].path }}"
-#    name: "file:{{ source_repo['bottle'].path }}/outside_pypi/PyXML-0.8.4.tar.gz"
-#    virtualenv: "{{ virtualenv_root }}/bottle"
+- name: Install PyXML
+  pip:
+    chdir: "{{ source_repo['bottle'].path }}"
+    name: "file:{{ source_repo['bottle'].path }}/outside_pypi/PyXML-0.8.4.tar.gz"
+    virtualenv: "{{ virtualenv_root }}/bottle"
 
 - name: Install requirements.txt
   pip:
