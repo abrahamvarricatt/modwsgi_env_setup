@@ -58,6 +58,7 @@
    - zip
    - unzip
    - gdb
+   - expat-devel
   notify:
     - restart redis
 

@@ -7,7 +7,7 @@ sources_root: /{{ app_root }}/sources
 
 # HTTPD source path and md5 checksum
 httpd_version: 2.4.20
-httpd_public_source: http://a.mbbsindia.com//httpd/httpd-{{ httpd_version }}.tar.gz
+httpd_public_source: http://www-us.apache.org/dist//httpd/httpd-{{ httpd_version }}.tar.gz
 httpd_md5_checksum: e725c268624737a163dc844e28f720d1
 
 apache_apr_version: 1.5.2
